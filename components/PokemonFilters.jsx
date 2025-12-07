@@ -61,7 +61,8 @@ const PokemonFilters = ({ data, selectedType, onTypeSelect }) => {
         onClick={() => onTypeSelect(null)}
         className={`
               px-4 py-2 rounded-xl text-sm font-medium border-2 transition-all duration-200
-              hover:shadow-md hover:scale-105 active:scale-95
+              hover:shadow-md hover:scale-105 active:scale-95 border-amber-300 text-amber-300
+              
             `}
       >
         Reset
