@@ -76,9 +76,6 @@ const PokeCard = ({
         <h3 className="text-lg font-semibold text-gray-900 truncate">
           {title}
         </h3>
-        <p className="mt-2 text-sm text-gray-500">
-          Optional description goes here.
-        </p>
       </div>
     </div>
   );
