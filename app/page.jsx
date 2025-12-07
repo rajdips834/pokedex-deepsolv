@@ -1,13 +1,11 @@
 "use client";
 import { useEffect, useState, useCallback, useRef } from "react";
 import PokeList from "../components/PokeList";
-import { fetchData, fetchPokemonWithTypes, fetchTypes } from "../api";
+import { fetchData } from "../api";
 import PokeDetails from "../components/PokeDetails";
 import SearchBar from "../components/SearchBar";
-import PokemonFilters from "../components/PokemonFilters";
 
 export default function Home() {
-  const [activeType, setActiveType] = useState("");
   const [searchValue, setSearchValue] = useState("");
   const [loading, setLoading] = useState(true);
   const [pokemons, setPokemons] = useState([]);
@@ -15,80 +13,10 @@ export default function Home() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [favoritesMap, setFavoritesMap] = useState(new Map());
   const [selectedPokemonId, setSelectedPokemonId] = useState(null);
-  const [pokemonTypes, setPokemonTypes] = useState([]);
   const observer = useRef(null);
+  const isSearchActive = useRef(false);
 
-  // Unified data fetcher
-  const fetchPokemons = useCallback(
-    async (limit, offsetVal, typeFilter = null) => {
-      setLoading(true);
-      const data = await (typeFilter
-        ? fetchPokemonWithTypes(limit, offsetVal, typeFilter)
-        : fetchData(limit, offsetVal));
-      setPokemons(data);
-      setOffset(limit);
-      setLoading(false);
-    },
-    []
-  );
-
-  // Load initial data + types
-  useEffect(() => {
-    fetchPokemons(20, 0);
-    fetchTypes().then(setPokemonTypes);
-  }, [fetchPokemons]);
-
-  // Refetch on type change (resets pagination)
-  useEffect(() => {
-    if (activeType) {
-      fetchPokemons(20, 0, activeType);
-    } else {
-      fetchPokemons(20, 0);
-    }
-  }, [activeType, fetchPokemons]);
-
-  // Load more for infinite scroll
-  const loadMore = useCallback(async () => {
-    if (loadingMore || activeType) return; // Disable infinite scroll when type filtered
-    setLoadingMore(true);
-    const newData = await fetchData(20, offset);
-    setPokemons((prev) => [...prev, ...newData]);
-    setOffset((prev) => prev + 20);
-    setLoadingMore(false);
-  }, [offset, loadingMore, activeType]);
-
-  // Search filter (inline)
-  const filteredPokemons = searchValue.trim()
-    ? pokemons.filter((pokemon) =>
-        pokemon.name.toLowerCase().includes(searchValue.toLowerCase().trim())
-      )
-    : pokemons;
-
-  // Reset offset on search
-  useEffect(() => {
-    setOffset(activeType ? 20 : 20);
-  }, [searchValue, activeType]);
-
-  // Intersection Observer
-  useEffect(() => {
-    const currentObserver = observer.current;
-    if (!currentObserver || filteredPokemons.length === 0) return;
-
-    const callback = (entries) => {
-      const [target] = entries;
-      if (target.isIntersecting && !loadingMore && !activeType) {
-        loadMore();
-      }
-    };
-
-    const options = { root: null, rootMargin: "20px", threshold: 0.1 };
-    const newObserver = new IntersectionObserver(callback, options);
-    newObserver.observe(currentObserver);
-
-    return () => newObserver.disconnect();
-  }, [filteredPokemons, loadMore, loadingMore, activeType]);
-
-  // Favorites persistence
+  // Load favorites from localStorage
   useEffect(() => {
     const saved = localStorage.getItem("pokemonFavorites");
     if (saved) {
@@ -97,11 +25,13 @@ export default function Home() {
     }
   }, []);
 
+  // Save favorites to localStorage
   useEffect(() => {
     const ids = Array.from(favoritesMap.keys());
     localStorage.setItem("pokemonFavorites", JSON.stringify(ids));
   }, [favoritesMap]);
 
+  // Toggle favorite
   const toggleFavorite = useCallback((pokemonId) => {
     setFavoritesMap((prev) => {
       const newMap = new Map(prev);
@@ -114,6 +44,7 @@ export default function Home() {
     });
   }, []);
 
+  // Modal handlers
   const openPokemonDetails = useCallback((pokemonId) => {
     setSelectedPokemonId(pokemonId);
   }, []);
@@ -122,6 +53,82 @@ export default function Home() {
     setSelectedPokemonId(null);
   }, []);
 
+  // Initial load
+  useEffect(() => {
+    const handleFetchData = async () => {
+      setLoading(true);
+      const data = await fetchData(20, 0);
+      setPokemons(data);
+      setOffset(20);
+      setLoading(false);
+    };
+    handleFetchData();
+  }, []);
+
+  // Track search state
+  useEffect(() => {
+    isSearchActive.current = searchValue.trim().length > 0;
+  }, [searchValue]);
+
+  // Infinite scroll - ALWAYS loads in background
+  const loadMore = useCallback(async () => {
+    if (loadingMore) return;
+
+    setLoadingMore(true);
+    const newData = await fetchData(20, offset);
+
+    // Only append if search is NOT active OR if data matches search
+    setPokemons((prev) => {
+      // Skip duplicates
+      const existingIds = new Set(prev.map((p) => p.id));
+      const newUniqueData = newData.filter((p) => !existingIds.has(p.id));
+      return [...prev, ...newUniqueData];
+    });
+
+    setOffset((prev) => prev + 20);
+    setLoadingMore(false);
+  }, [offset, loadingMore]);
+
+  // Filter pokemons based on search
+  const filteredPokemons = !searchValue.trim()
+    ? pokemons
+    : pokemons.filter((pokemon) =>
+        pokemon.name.toLowerCase().includes(searchValue.toLowerCase().trim())
+      );
+
+  // Intersection Observer - works on FULL list (background loading)
+  useEffect(() => {
+    const currentObserver = observer.current;
+    if (!currentObserver || pokemons.length === 0) return;
+
+    const callback = (entries) => {
+      const [target] = entries;
+      if (target.isIntersecting && !loadingMore) {
+        loadMore(); // Always loads regardless of search
+      }
+    };
+
+    const options = { root: null, rootMargin: "20px", threshold: 0.1 };
+    const newObserver = new IntersectionObserver(callback, options);
+    newObserver.observe(currentObserver);
+
+    return () => newObserver.disconnect();
+  }, [pokemons.length, loadMore, loadingMore]); // Depend on total length
+
+  // ESC key handler
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === "Escape") {
+        closePokemonDetails();
+      }
+    };
+    if (selectedPokemonId) {
+      document.addEventListener("keydown", handleEsc);
+      return () => document.removeEventListener("keydown", handleEsc);
+    }
+  }, [selectedPokemonId, closePokemonDetails]);
+
+  // Search results count
   const searchResultsCount = filteredPokemons.length;
   const totalPokemonsCount = pokemons.length;
   const isSearching = searchValue.trim();
@@ -142,14 +149,20 @@ export default function Home() {
             placeholder="Search Pokémon by name..."
           />
 
+          {/* Search results info */}
           {isSearching && (
-            <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-2xl text-sm text-blue-800">
-              Found {searchResultsCount} of {totalPokemonsCount} Pokémon
-              {searchResultsCount === 0 && ` for "${searchValue}"`}
+            <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-2xl text-sm text-blue-800 flex items-center gap-2">
+              <span>
+                Found {searchResultsCount} of {totalPokemonsCount} Pokémon
+                {searchResultsCount === 0 && ` for "${searchValue}"`}
+              </span>
+              {totalPokemonsCount > searchResultsCount && (
+                <span className="text-xs bg-blue-200 px-2 py-1 rounded-full">
+                  Loading more...
+                </span>
+              )}
             </div>
           )}
-
-          <PokemonFilters data={pokemonTypes} onTypeSelect={setActiveType} />
 
           <PokeList
             pokemons={filteredPokemons}
