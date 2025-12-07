@@ -11,6 +11,7 @@ A modern Pokedex application built with Next.js, React, and Tailwind CSS. It all
 - **Favorites System:** Mark your favorite Pokémon. Your selections are saved locally in your browser.
 - **Responsive Design:** A clean and modern UI that works beautifully across all devices, from desktops to mobile phones.
 - **Loading & Error States:** User-friendly loading skeletons and error messages for a smooth experience.
+- **POC for OAuth** User-friendly firebase OAuth integration
 
 ## Tech Stack
 
@@ -19,6 +20,7 @@ A modern Pokedex application built with Next.js, React, and Tailwind CSS. It all
 - **Styling:** [Tailwind CSS](https://tailwindcss.com/) 4
 - **Data Fetching:** [Axios](https://axios-http.com/)
 - **API:** [PokeAPI](https://pokeapi.co/api/v2)
+- **Authentication:**Firebase OAuth 
 
 ## Getting Started
 
@@ -26,7 +28,7 @@ To run this project locally, follow these steps.
 
 ### Prerequisites
 
-You need to have Node.js and npm (or yarn/pnpm/bun) installed on your machine.
+You need to have npm (or yarn/pnpm/bun) installed on your machine.
 
 ### Installation & Setup
 
@@ -72,3 +74,6 @@ You need to have Node.js and npm (or yarn/pnpm/bun) installed on your machine.
 - `public/`: Stores static assets.
 - `types/`: TypeScript type definitions for the project.
 - `utils/`: Utility functions and helper scripts.
+
+## Login Route (Authentication POC)
+Go the the  [http://localhost:3000/signin](http://localhost:3000/signin) endpoint on your local system or  [https://pokedex-deepsolv-three.vercel.app/signin](https://pokedex-deepsolv-three.vercel.app/signin) 
