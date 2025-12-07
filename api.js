@@ -19,8 +19,11 @@ export const fetchData = async (limit = 10, offset = 0) => {
         types: pokeDetails.data.types,
         number: pokeDetails.data.id.toString().padStart(3, "0"),
         image:
-          pokeDetails.data.sprites.versions["generation-v"]["black-white"]
-            .animated.front_default,
+          pokeDetails.data.sprites.other?.["official-artwork"]?.front_default ||
+          pokeDetails.data.sprites.other?.home?.front_default ||
+          pokeDetails.data.sprites.front_default ||
+          pokeDetails.data.sprites.versions?.["generation-v"]?.["black-white"]
+            ?.animated?.front_default,
       });
     }
 
@@ -28,5 +31,70 @@ export const fetchData = async (limit = 10, offset = 0) => {
   } catch (error) {
     console.error("Error fetching Pokémon:", error);
     return [];
+  }
+};
+
+export const fetchPokemonDetails = async (id) => {
+  try {
+    const res = await api.get(`/pokemon/${id}`);
+    const rawData = res.data;
+
+    // Map essential data from PokeAPI response
+    const pokemon = {
+      id: rawData.id,
+      name: rawData.name,
+      number: rawData.id.toString().padStart(3, "0"),
+
+      // Multiple image options (use official-artwork as primary)
+      image:
+        rawData.sprites.other?.["official-artwork"]?.front_default ||
+        rawData.sprites.other?.home?.front_default ||
+        rawData.sprites.front_default ||
+        rawData.sprites.versions?.["generation-v"]?.["black-white"]?.animated
+          ?.front_default,
+
+      // Types (with slot order)
+      types: rawData.types.map((type) => ({
+        slot: type.slot,
+        type: type.type.name,
+      })),
+
+      // Stats
+      stats: rawData.stats.map((stat) => ({
+        name: stat.stat.name,
+        base_stat: stat.base_stat,
+        effort: stat.effort,
+      })),
+
+      // Abilities (first 2, with hidden flag)
+      abilities: rawData.abilities.slice(0, 2).map((ability) => ({
+        name: ability.ability.name,
+        url: ability.ability.url,
+        is_hidden: ability.is_hidden,
+        slot: ability.slot,
+      })),
+
+      // Physical characteristics
+      height: rawData.height / 10, // Convert decimeters to meters
+      weight: rawData.weight / 10, // Convert hectograms to kg
+
+      // Base experience
+      base_experience: rawData.base_experience,
+
+      // Sprite variants (for modal showcase)
+      sprites: {
+        front_default: rawData.sprites.front_default,
+        front_shiny: rawData.sprites.front_shiny,
+        back_default: rawData.sprites.back_default,
+        official_art:
+          rawData.sprites.other?.["official-artwork"]?.front_default,
+      },
+    };
+
+    console.log("Mapped Pokemon Data:", pokemon);
+    return pokemon;
+  } catch (error) {
+    console.error("Error fetching Pokemon details:", error);
+    throw error;
   }
 };
