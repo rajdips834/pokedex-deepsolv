@@ -1,36 +1,71 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Pokedex
+
+
+A modern Pokedex application built with Next.js, React, and Tailwind CSS. It allows users to browse, search, and view detailed information about Pokémon, leveraging the public [PokeAPI](https://pokeapi.co/) for data.
+
+## Features
+
+*   **Infinite Scrolling:** Seamlessly browse through the entire list of Pokémon.
+*   **Search Functionality:** Quickly find Pokémon by name with a real-time search bar.
+*   **Type Filtering:** Filter the Pokémon list by their specific type (e.g., Fire, Water, Grass).
+*   **Detailed View:** Click on any Pokémon to open a detailed modal with information on its stats, abilities, physical attributes, and types.
+*   **Favorites System:** Mark your favorite Pokémon. Your selections are saved locally in your browser.
+*   **Responsive Design:** A clean and modern UI that works beautifully across all devices, from desktops to mobile phones.
+*   **Loading & Error States:** User-friendly loading skeletons and error messages for a smooth experience.
+
+## Tech Stack
+
+*   **Framework:** [Next.js](https://nextjs.org/) 16
+*   **UI Library:** [React](https://react.dev/) 19
+*   **Styling:** [Tailwind CSS](https://tailwindcss.com/) 4
+*   **Data Fetching:** [Axios](https://axios-http.com/)
+*   **API:** [PokeAPI](https://pokeapi.co/api/v2)
 
 ## Getting Started
 
-First, run the development server:
+To run this project locally, follow these steps.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### Prerequisites
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+You need to have Node.js and npm (or yarn/pnpm/bun) installed on your machine.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Installation & Setup
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/rajdips834/pokedex-deepsolv.git
+    ```
 
-## Learn More
+2.  **Navigate to the project directory:**
+    ```bash
+    cd pokedex-deepsolv
+    ```
 
-To learn more about Next.js, take a look at the following resources:
+3.  **Install dependencies:**
+    ```bash
+    npm install
+    # or
+    yarn install
+    # or
+    pnpm install
+    ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+4.  **Run the development server:**
+    ```bash
+    npm run dev
+    # or
+    yarn dev
+    # or
+    pnpm dev
+    ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+5.  Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
 
-## Deploy on Vercel
+## Project Structure
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+*   `app/`: Main application directory containing the layout and pages.
+*   `components/`: Contains all the reusable React components, such as `PokeCard`, `SearchBar`, and the detailed view components.
+*   `api.js`: Handles all the logic for fetching and processing data from the PokeAPI.
+*   `public/`: Stores static assets.
+*   `types/`: TypeScript type definitions for the project.
+*   `utils/`: Utility functions and helper scripts.
