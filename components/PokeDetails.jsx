@@ -2,7 +2,7 @@
 "use client";
 import React, { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
-import { fetchPokemonDetails } from "../api";
+import { fetchPokemonDetails } from "../data";
 import PokemonContent from "./PokemonDetails/PokemonContent";
 import LoadingState from "./PokemonDetails/LoadingState";
 import ErrorState from "./PokemonDetails/ErrorState";

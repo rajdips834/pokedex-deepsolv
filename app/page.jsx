@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState, useCallback, useRef } from "react";
 import PokeList from "../components/PokeList";
-import { fetchData } from "../api";
+import { fetchData } from "../data";
 import PokeDetails from "../components/PokeDetails";
 import SearchBar from "../components/SearchBar";
 
