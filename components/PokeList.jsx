@@ -118,53 +118,48 @@ const PokeList = () => {
   return (
     <>
       <section className="w-full px-4 py-10 bg-gray-50 min-h-screen">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-semibold text-gray-900">
-              Pokemon Gallery
-            </h2>
-            <div className="text-sm text-gray-500">
-              {favoritesMap.size} favorite{favoritesMap.size !== 1 ? "s" : ""}
-            </div>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-semibold text-gray-900">
+            Pokemon Gallery
+          </h2>
+          <div className="text-sm text-gray-500">
+            {favoritesMap.size} favorite{favoritesMap.size !== 1 ? "s" : ""}
           </div>
+        </div>
 
-          <div
-            className="
+        <div
+          className="
               grid gap-6
               grid-cols-1
               sm:grid-cols-2
               md:grid-cols-3
               lg:grid-cols-4
+              xl:grid-cols-5
             "
-          >
-            {loading
-              ? Array.from({ length: 12 }).map((_, index) => (
-                  <PokeCard key={index} loading />
-                ))
-              : pokemons.map((pokemon) => (
-                  <div
-                    key={pokemon.id}
-                    className="group"
-                    onClick={() => openPokemonDetails(pokemon.id)}
-                  >
-                    <PokeCard
-                      title={pokemon.name}
-                      image={pokemon.image}
-                      id={pokemon.id}
-                      isFavourite={favoritesMap.has(pokemon.id)}
-                      onToggleFavourite={() => toggleFavorite(pokemon.id)}
-                    />
-                  </div>
-                ))}
+        >
+          {loading
+            ? Array.from({ length: 12 }).map((_, index) => (
+                <PokeCard key={index} loading />
+              ))
+            : pokemons.map((pokemon) => (
+                <PokeCard
+                  onClick={() => openPokemonDetails(pokemon.id)}
+                  key={pokemon.id}
+                  title={pokemon.name}
+                  image={pokemon.image}
+                  id={pokemon.id}
+                  isFavourite={favoritesMap.has(pokemon.id)}
+                  onToggleFavourite={() => toggleFavorite(pokemon.id)}
+                />
+              ))}
 
-            {loadingMore && (
-              <div className="col-span-full flex justify-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-              </div>
-            )}
+          {loadingMore && (
+            <div className="col-span-full flex justify-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+            </div>
+          )}
 
-            <div ref={observer} className="h-10" />
-          </div>
+          <div ref={observer} className="h-10" />
         </div>
       </section>
 
