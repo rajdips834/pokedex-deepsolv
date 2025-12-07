@@ -4,7 +4,6 @@ import StatBar from "./StatBar";
 import AbilityCard from "./AbilityCard";
 import Image from "next/image";
 const PokemonContent = ({ pokemon }) => {
-  console.log(pokemon);
   return (
     <div className="grid grid-cols-1 xl:grid-cols-2 gap-12 items-start">
       {/* Image & Basic Info */}

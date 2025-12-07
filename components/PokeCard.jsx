@@ -8,7 +8,6 @@ const PokeCard = ({
   loading = false,
   isFavourite = false,
   onToggleFavourite,
-  onClick,
 }) => {
   if (loading) {
     return (
@@ -62,13 +61,10 @@ const PokeCard = ({
         </svg>
       </button>
 
-      <div
-        onClick={() => onClick(id)}
-        className="relative h-44 overflow-hidden"
-      >
+      <div className="relative h-44 overflow-hidden">
         <Image
           fill={true}
-          src={image}
+          src={image || "/placeholder.png"}
           alt={title}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
@@ -76,7 +72,7 @@ const PokeCard = ({
         <div className="absolute inset-0 bg-linear-to-t from-black/40 to-transparent" />
       </div>
 
-      <div onClick={() => onClick(id)} className="p-4">
+      <div className="p-4">
         <h3 className="text-lg font-semibold text-gray-900 truncate">
           {title}
         </h3>
